@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+/* global console */
+/**
+*
+*	Scaffold dialogflow webhook functions folder with actions, considerations and responses for dialogflow app
+*
+*/ 
+
+// https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
+
+const init = require('./init');
+const sync = require('./sync');
+const create = require('./create');
+
+const args = require('yargs')
+	.demandCommand(1)
+	.command({
+		command: 'init',
+		aliases: ['i'],
+		desc: 'scaffold the project',
+		// builder: (yargs) => yargs.default('value', 'true'),
+		handler: init
+	})
+	.command({
+		command: 'create <name>',
+		aliases: ['c'],
+		desc: 'create a consideration module by name',
+		handler: (yargs) => { create(yargs.name); }
+	})
+	.command({
+		command: 'sync',
+		aliases: ['s'],
+		desc: 'sync with remote',
+		handler: sync
+	})
+	.demandCommand(1, 'You need at least one command before moving on')
+	// .usage('\nScaffold dialogflow webhook functions folder with actions, considerations and responses for dialogflow app.\n')
+	.help()
+	.argv
+

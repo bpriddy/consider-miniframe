@@ -1,0 +1,5 @@
+{
+	"storageType": "<json||mongo>",
+	"credsFilePath": "path/to/creds",
+	"entryFilePath": "path/to/entry/json"
+}
