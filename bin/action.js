@@ -2,14 +2,13 @@ const path = require('path')
 const ncp = require('ncp')
 const fs = require('fs');
 const chalk = require('chalk');
-
-const utils = require('./utils')
+const utils = require('./utils');
 
 module.exports = (name) => {
-	console.log(`create consideration: ${name}`)
-	const source = path.resolve(__dirname, "../templates/considerations/consideration/");
+	console.log(`create action: ${name}`)
+	const source = path.resolve(__dirname, "../templates/actions/action/");
 	const rootDir = utils.rootDirInRange();
-	const destination = `${rootDir}/considerations/${name}`;
+	const destination = `${rootDir}/actions/${name}`;
 
 	if (fs.existsSync(destination)){ 
 		return console.error(chalk.red(`!! Another consideration with the name:  ${name} already exists !!`))
@@ -21,11 +20,9 @@ module.exports = (name) => {
 			return console.error(err);
 		}
 		utils.openTemplateSave(path.resolve(destination, './index.js'), {name:name});
-		utils.openTemplateSave(path.resolve(destination, './config.js'), {name:name});
-		utils.openTemplateSave(path.resolve(destination, './data.json'), {name:name});
+		utils.openTemplateSave(path.resolve(destination, './intents.json'), {name:name});
 
-		console.log(chalk.green(`${name} consideration successfully scaffolded !!`));
+		console.log(chalk.green(`${name} action successfully scaffolded !!`));
 
 	});
 }
-
