@@ -6,6 +6,7 @@
     "yargs": "^11.0.0"
   },
   "dependencies": {
+    "es6-template-strings": "^2.0.1",
     "ncp": "^2.0.0"
   }
 }
