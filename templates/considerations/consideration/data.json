@@ -1,10 +1,5 @@
-/**
-*
-*	This is an optional data file specific to the consideration.  
-*	If the consideration necessitates adding simple static text, 
-*	you may store and access it from here.
-*
-*/
+
 {
+	
 	"key":"value"
 }

@@ -3,11 +3,14 @@
 const { DialogflowApp } = require('actions-on-google')
 const functions = require('firebase-functions')
 
+const utils = require('./lib/utils')
 const config = require('./consider.json')
 
-const actionHandlers = require('./actions')
-const considerations = require('./considerations')
+const actionsHandlers = utils.requireFoldersIntoObject('./actions')
+const considerations = utils.requireFoldersIntoObject('./considerations')
+
 const responses = require('./responses')
+
 
 /**
 *
