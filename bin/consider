@@ -11,6 +11,7 @@
 const init = require('./init');
 const sync = require('./sync');
 const create = require('./create');
+const action = require('./action');
 
 const args = require('yargs')
 	.demandCommand(1)
@@ -26,6 +27,12 @@ const args = require('yargs')
 		aliases: ['c'],
 		desc: 'create a consideration module by name',
 		handler: (yargs) => { create(yargs.name); }
+	})
+	.command({
+		command: 'action <name>',
+		aliases: ['a'],
+		desc: 'create a action module by name',
+		handler: (yargs) => { action(yargs.name); }
 	})
 	.command({
 		command: 'sync',
