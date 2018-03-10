@@ -3,11 +3,14 @@
 const { DialogflowApp } = require('actions-on-google')
 const functions = require('firebase-functions')
 
+const utils = require('./lib/utils')
 const config = require('./consider.json')
 
-const actionHandlers = require('./actions')
-const considerations = require('./considerations')
+const actionsHandlers = utils.requireFoldersIntoObject('./actions')
+const considerations = utils.requireFoldersIntoObject('./considerations')
+
 const responses = require('./responses')
+
 
 /**
 *
@@ -26,7 +29,6 @@ const ask = (app, inputPrompt, noInputPrompts) => {
 *
 */
 exports.https = functions.https.onRequest((request, response) => {
-	//How do we determine if this is an init request
 	if(!app.data.intialized) initializeAppData(app);
 	let result = request.body.result
 
@@ -38,8 +40,6 @@ exports.https = functions.https.onRequest((request, response) => {
 	let app = new DialogflowApp({ request, response })
 	let action = result.action
 	if(action in actionHandlers){
-		// clear history 
-		
 		let intent = result.metadata.intentName
 		app.data.history.push({action, intent})
 		actionHandlers[action](app, result, intent, ask, considerations, responses)
