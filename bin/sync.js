@@ -200,42 +200,8 @@ const matchOrSuggestResponses = () => {
 	return new Promise((resolve, reject) => {
 		syncObj.intents.forEach((int) => {
 			toCheck.push(int.name)
-			let options = []
-			syncObj.entities.forEach( e => {
-				if(int.parameters.indexOf(e.name) > -1) {
-					if(e.entries.length > 1) {
-						let values = e.entries.map( en => en.value )
-						options.push(values)
-					}
-				}
-			})
-			let combinations = []
-
-			const createCombos = (base, arr, idx) => {
-				arr.forEach( name => {
-					pattern = `${base}:${name}`
-					combinations.push(pattern)
-					for(var i=idx;i<options.length-1;i++) {
-						createCombos(pattern,options[i+1], i+1)
-					}
-				})
-			}
-
-			options.forEach( (c, idx) => {
-				createCombos(int.name, options[0], 0)
-			})
-
-
-
-			toCheck = toCheck.concat(combinations)
-
-
+			toCheck = toCheck.concat(generateParameterOptions(syncObj.entities, int.name, int.parameters))
 		})
-
-		
-		// if(!responses.find(int.name.toLowerCase())) {
-		// 	notFound.push(int.name.toLowerCase());
-		// }
 
 		let notFound = toCheck.filter( ch => {
 			if(!responses.find(ch)) return ch;
@@ -246,6 +212,38 @@ const matchOrSuggestResponses = () => {
 	})
 }
 
+
+const generateParameterOptions = (arr, name, parameters) => {
+
+	let options = []
+
+	arr.forEach( e => {
+		if(parameters.indexOf(e.name) > -1) {
+			if(e.entries.length > 1) {
+				let values = e.entries.map( en => en.value )
+				options.push(values)
+			}
+		}
+	})
+	let combinations = []
+
+	const createCombos = (base, arr, idx) => {
+		arr.forEach( name => {
+			pattern = `${base}:${name}`
+			combinations.push(pattern)
+			for(var i=idx;i<options.length-1;i++) {
+				createCombos(pattern,options[i+1], i+1)
+			}
+		})
+	}
+
+	options.forEach( (c, idx) => {
+		createCombos(name, options[0], 0)
+	})
+
+	return combinations;
+
+}
 
 
 
