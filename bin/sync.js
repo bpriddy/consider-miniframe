@@ -196,12 +196,10 @@ const addIntentsRefToActions = () => {
 
 const matchOrSuggestResponses = () => {
 	console.log(chalk.yellow(`Match or suggest responses`))
-	let notFound = [];
+	let toCheck = []
 	return new Promise((resolve, reject) => {
 		syncObj.intents.forEach((int) => {
-			if(!responses.find(int.name.toLowerCase())) {
-				notFound.push(int.name.toLowerCase());
-			}
+			toCheck.push(int.name)
 			let options = []
 			syncObj.entities.forEach( e => {
 				if(int.parameters.indexOf(e.name) > -1) {
@@ -223,19 +221,26 @@ const matchOrSuggestResponses = () => {
 				})
 			}
 
-
 			options.forEach( (c, idx) => {
-				c.forEach( n => {
-					let pattern = `${int.name}:${n}`
-					combinations.push(pattern)
-					for(var i=idx; i<options.length-1; i++) {
-						createCombos(pattern, options[i+1], i+1)
-					}
-				} )
+				createCombos(int.name, options[0], 0)
 			})
 
 
+
+			toCheck = toCheck.concat(combinations)
+
+
 		})
+
+		
+		// if(!responses.find(int.name.toLowerCase())) {
+		// 	notFound.push(int.name.toLowerCase());
+		// }
+
+		let notFound = toCheck.filter( ch => {
+			if(!responses.find(ch)) return ch;
+		})
+		console.log("notFound",notFound)
 		let outputText = JSON.stringify(notFound).split(",").join(",\n")
 		fs.writeFileSync(`${rootPath}/responses/SUGGESTIONS_OF_RESPONSES_TO_ADD.json`, outputText)
 	})
