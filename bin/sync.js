@@ -2,6 +2,7 @@ const fs = require('fs')
 const request = require('request')
 const path = require('path')
 const template = require('es6-template-strings');
+const chalk = require('chalk')
 const utils = require('./utils');
 const createAction = require('./action');
 
@@ -31,9 +32,12 @@ module.exports = () => {
 		.then(matchRemoteActionsToLocal) // add new actions from dialogflow
 		.then(addNewActions)
 		.then(matchLocalActionsToRemote) // callout unused local actions
+		.then(addIntentsRefToActions)
+
 }
 
 const get = (type)=> {
+	console.log(chalk.yellow(`Retrieving: ${type}`))
 	let ep = template(endpoint, {type:type})
 	return new Promise((resolve, reject) => {
 		let opts = {
@@ -56,9 +60,10 @@ const get = (type)=> {
 }
 
 const clean = (obj) => {
+	console.log(chalk.yellow(`Cleaning: ${obj.type}`))
 	return new Promise((resolve, reject) => {
 		obj.json = obj.json.map( (i) => {
-			if(obj.type === "intent") {
+			if(obj.type === "intents") {
 				return {
 					name:i.name, 
 					actions: i.actions
@@ -90,6 +95,7 @@ const getLocalActions = () => {
 
 
 const matchRemoteActionsToLocal = (localActions) => {
+	console.log(chalk.yellow(`Compare remote actions to local`))
 	return new Promise((resolve, reject) => {
 		let newActions = []
 		syncObj.intents.forEach( (i) => {
@@ -110,15 +116,40 @@ const matchRemoteActionsToLocal = (localActions) => {
 
 const addNewActions = (newActions) => {
 	return new Promise((resolve, reject) => {
-		newActions.forEach((a) => {
-			createAction(a)
+		let actionPromises = newActions.map(a => {
+			return createAction(a);
 		})
+		Promise.all(actionPromises)
+			.then(() => { console.log('adfslfadsjkl;'); resolve() })
+			.catch(e => console.error(e))
 	})
 }
 
 const matchLocalActionsToRemote = () => {
+	console.log(chalk.yellow(`Compare local actions to remote`))
 	return new Promise((resolve, reject) => {
+		let newActions = []
+		localActions.forEach( (a) => {
+			let matched = false
+			syncObj.intents.forEach( (i) => {
+				if(a === i.actions[0].toLowerCase()) {
+					console.log(chalk.orange(`${a} action is on local, but not on Dialogflow`))
+				}
+			})
+		})
+		resolve()
+	})
+}
 
+const addIntentsRefToActions = () => {
+	return new Promise((resolve, reject) => {
+		syncObj.intents.forEach((i) => {
+			let action = i.actions[0].toLowerCase();
+			let intentsJSON = fs.readFileSync(`${rootPath}/actions/${action}/intents.json`, 'utf8')
+			intentsJSON = JSON.parse(intentsJSON)
+			if(intentsJSON.indexOf(i.name) < 0) intentsJSON.push(i.name);
+			fs.writeFileSync(`${rootPath}/actions/${action}/intents.json`, JSON.stringify(intentsJSON))		
+		})
 	})
 }
 
