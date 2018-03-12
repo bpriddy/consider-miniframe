@@ -41,6 +41,13 @@ module.exports = () => {
 		.then(matchLocalActionsToRemote) // callout unused local actions
 		.then(addIntentsRefToActions)
 		.then(matchOrSuggestResponses)
+		.then(() => {
+			console.log("\n")
+			console.log(chalk.green("======================"))
+			console.log("\n")
+			console.log(chalk.green("Sync complete!"))
+			console.log("\n")
+		})
 
 }
 
@@ -206,9 +213,9 @@ const matchOrSuggestResponses = () => {
 		let notFound = toCheck.filter( ch => {
 			if(!responses.find(ch)) return ch;
 		})
-		console.log("notFound",notFound)
 		let outputText = JSON.stringify(notFound).split(",").join(",\n")
 		fs.writeFileSync(`${rootPath}/responses/SUGGESTIONS_OF_RESPONSES_TO_ADD.json`, outputText)
+		resolve()
 	})
 }
 
