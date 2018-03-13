@@ -6,7 +6,7 @@ const { spawn } = require('child_process');
 const readline = require('readline');
 let rl
 const utils = require('./utils');
-
+let projectID, slug, accessToken;
 let rootDir;
 
 module.exports = () => {
@@ -17,14 +17,12 @@ module.exports = () => {
 	console.log(chalk.green('\n\nConsider.js initializing functions webhook project'))
 	console.log(chalk.green("=================================\n"))
 
-	const source = path.resolve(__dirname, "../templates/functions/");
-	const destination = path.resolve(process.cwd(),`functions/`);
-
-	cloneDirectory(source, destination)
-		.then(addProjectID)
-		.then(addProjectTitle)
+	setProjectID()
+		.then(setProjectTitle)
 		.then(setAccessToken)
-		.then(turnOnGitIgnore)
+		.then(cloneDirectory)
+		.then(cleanFiles)
+		.then(templateProjectSettings)
 		.then(npmInstall)
 		.then(() => {
 			rl.close();
@@ -36,29 +34,13 @@ module.exports = () => {
 		})
 }
 
-const cloneDirectory = (source, destination) => {
-	return new Promise((resolve, reject) => {
-		if (fs.existsSync(path.resolve(process.cwd(),`functions`))){ 
-			return console.error(chalk.red(`!! Another functions folder already exists in this location. Please remove or change locations !!`))
-		}
-		fs.mkdirSync(path.resolve(process.cwd(),`functions`));
-		ncp(source, destination, (err) => {
-			if (err) return console.error(err);
-			console.log(chalk.green('Project successfully scaffolded!\n\n'));
-			rootDir = utils.rootDirInRange();
-			resolve()
-		});
-	})
-}
-
-const addProjectID = () => {
+const setProjectID = () => {
 	return new Promise((resolve, reject) => {
 		const tryToGetID = () => {
 			rl.question('Please enter your Google Actions Project ID: ', (pID) => {
 				if(pID.length === 0) return tryToGetID();
-				utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:pID});
-				console.log(`your project ID: ${pID}`);
-				resolve(pID);
+				projectID = pID;
+				resolve();
 			});
 		}
 		tryToGetID()
@@ -69,13 +51,12 @@ const addProjectID = () => {
 
 
 
-const addProjectTitle = (pID) => {
+const setProjectTitle = (pID) => {
 	return new Promise((resolve, reject) => {
 		const tryToGetSlug = () => {
 			rl.question('Please choose a project slug: ', (projectslug) => {
 				if(projectslug.length === 0) return tryToGetSlug();
-				utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:projectslug, pID: pID});
-				console.log(`your project slug: ${projectslug}`);
+				slug = projectslug;
 				resolve();
 			});
 		}
@@ -90,8 +71,7 @@ const setAccessToken = () => {
 		const tryToGetAT = () => {
 			rl.question('Please enter your Dialogflow Developer access token: ', (aT) => {
 				if(aT.length === 0) return tryToGetAT();
-				utils.openTemplateSave(`${rootDir}/.access_token`, {aT:aT});
-				console.log(`your access token: ${aT}`);
+				accessToken = aT;
 				resolve();
 			});
 		}
@@ -100,8 +80,38 @@ const setAccessToken = () => {
 	})
 }
 
-const turnOnGitIgnore = () => {
+const cloneDirectory = (source, destination) => {
 	return new Promise((resolve, reject) => {
+
+		let source = path.resolve(__dirname, "../templates/functions/");
+		let destination = path.resolve(process.cwd(),`functions/`);
+
+		if (fs.existsSync(path.resolve(process.cwd(),`functions`))){ 
+			return console.error(chalk.red(`!! Another functions folder already exists in this location. Please remove or change locations !!`))
+		}
+		fs.mkdirSync(path.resolve(process.cwd(),`functions`));
+		ncp(source, destination, (err) => {
+			if (err) return console.error(err);
+			console.log(chalk.green('Project successfully scaffolded!\n\n'));
+			rootDir = utils.rootDirInRange();
+			resolve()
+		});
+	})
+}
+
+const templateProjectSettings = () => {
+	return new Promise((resolve, reject) => {
+		utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:projectID});
+		utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:slug, pID: projectID});
+		utils.openTemplateSave(`${rootDir}/.access_token`, {aT:accessToken});
+		resolve();
+	})
+}
+
+
+const cleanFiles = () => {
+	return new Promise((resolve, reject) => {
+		fs.unlinkSync(`${rootDir}/actions/.ignore`)
 		fs.renameSync(`${rootDir}/_.gitignore`, `${rootDir}/.gitignore`)
 		resolve()	
 	})
