@@ -9,4 +9,5 @@ const handledIntents = require('./intents.json')
 
 module.exports = (app, result, intent, ask, considerations) => {
 	//add code here
+	ask(app, 'this is a default response for the ${name} action.  Please hook up the correct response.')
 }

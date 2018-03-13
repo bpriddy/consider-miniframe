@@ -30,7 +30,7 @@ module.exports = () => {
 			rl.close();
 			console.log(
 				chalk.green('Project successfully initialized!  Please run')+
-				chalk.white(' consider sync ')+
+				chalk.white(' considerjs sync ')+
 				chalk.green('to match your local dev environment to Dialogflow.')
 			)
 		})
