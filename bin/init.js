@@ -11,6 +11,8 @@ const rl = readline.createInterface({
 
 const utils = require('./utils');
 
+let rootDir;
+
 module.exports = () => {
 	console.log(chalk.green('\n\nConsider.js initializing functions webhook project'))
 	console.log(chalk.green("=================================\n"))
@@ -21,13 +23,15 @@ module.exports = () => {
 	cloneDirectory(source, destination)
 		.then(addProjectID)
 		.then(addProjectTitle)
+		.then(setAccessToken)
+		.thent(turnOnGitIgnore)
 		.then(npmInstall)
 		.then(() => {
 			rl.close();
 			console.log(
-				chalk.green('Project successfully initialized!  Please consider running')+
+				chalk.green('Project successfully initialized!  Please run')+
 				chalk.white(' consider sync ')+
-				chalk.green('now to match your dev environment to Dialogflow.')
+				chalk.green('to match your local dev environment to Dialogflow.')
 			)
 		})
 }
@@ -41,6 +45,7 @@ const cloneDirectory = (source, destination) => {
 		ncp(source, destination, (err) => {
 			if (err) return console.error(err);
 			console.log(chalk.green('Project successfully scaffolded!\n\n'));
+			rootDir = utils.rootDirInRange();
 			resolve()
 		});
 	})
@@ -48,7 +53,6 @@ const cloneDirectory = (source, destination) => {
 
 const addProjectID = () => {
 	return new Promise((resolve, reject) => {
-		const rootDir = utils.rootDirInRange();
 		const tryToGetID = () => {
 			rl.question('Please enter your Google Actions Project ID: ', (pID) => {
 				if(pID.length === 0) return tryToGetID();
@@ -62,9 +66,11 @@ const addProjectID = () => {
 	})
 }
 
+
+
+
 const addProjectTitle = (pID) => {
 	return new Promise((resolve, reject) => {
-		const rootDir = utils.rootDirInRange();
 		const tryToGetSlug = () => {
 			rl.question('Please choose a project slug: ', (projectslug) => {
 				if(projectslug.length === 0) return tryToGetSlug();
@@ -75,6 +81,29 @@ const addProjectTitle = (pID) => {
 		}
 		tryToGetSlug()
 		
+	})
+}
+
+
+const setAccessToken = () => {
+	return new Promise((resolve, reject) => {
+		const tryToGetAT = () => {
+			rl.question('Please enter your Dialogflow Developer access token: ', (aT) => {
+				if(aT.length === 0) return tryToGetAT();
+				utils.openTemplateSave(`${rootDir}/.access_token`, {aT:aT});
+				console.log(`your access token: ${aT}`);
+				resolve();
+			});
+		}
+		tryToGetAT()
+			
+	})
+}
+
+const turnOnGitIgnore = () => {
+	return new Promise((resolve, reject) => {
+		fs.renameSync(`${rootDir}/_.gitignore`, `${rootDir}/.gitignore`)
+		resolve()	
 	})
 }
 

@@ -6,9 +6,8 @@ const chalk = require('chalk')
 const utils = require('./utils');
 const createAction = require('./action');
 
-const accessToken = fs.readFileSync(path.resolve(__dirname, `../.access_token`), 'utf8')
 const endpoint = 'https://api.dialogflow.com/v1/${type}/${id}?v=20150910';
-
+let accessToken
 let responses;
 
 let syncObj = {
@@ -23,6 +22,7 @@ let ignoreList = [
 module.exports = () => {
 	
 	rootPath = utils.rootDirInRange()
+	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
 	if(!rootPath) console.error(chalk.red("This must be executed from next to the functions folder or within it !!"));
 	responses = require(`${rootPath}/responses`)
 
