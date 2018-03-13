@@ -4,6 +4,7 @@ const path = require('path')
 const template = require('es6-template-strings');
 const chalk = require('chalk')
 const readline = require('readline');
+let rl; 
 const utils = require('./utils');
 const createAction = require('./action');
 
@@ -23,7 +24,7 @@ let ignoreList = [
 
 
 module.exports = () => {
-	const rl = readline.createInterface({
+	rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});

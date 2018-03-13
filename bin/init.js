@@ -4,13 +4,13 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { spawn } = require('child_process');
 const readline = require('readline');
-
+let rl
 const utils = require('./utils');
 
 let rootDir;
 
 module.exports = () => {
-	const rl = readline.createInterface({
+	rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});

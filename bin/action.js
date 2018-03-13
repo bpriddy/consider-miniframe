@@ -3,11 +3,12 @@ const ncp = require('ncp')
 const fs = require('fs');
 const chalk = require('chalk');
 const readline = require('readline');
+let rl
 const utils = require('./utils');
 
 module.exports = (name) => {
 	
-	const rl = readline.createInterface({
+	rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
