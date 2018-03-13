@@ -1,8 +1,8 @@
 {
   "name": "considerjs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
-  "repository": "https://github.com/tooldigital/consider-miniframe.git",
+  "repository": "https://github.com/benoftoolofna/consider-miniframe.git",
   "contributors": [
     "Ben Priddy <ben.priddy@toolofna.com> (https://github.com/benoftoolofna)",
     "Josh Beckwith <josh.beckwith@toolofna.com> (https://github.com/positlabs)"
