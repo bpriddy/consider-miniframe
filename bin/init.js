@@ -24,7 +24,7 @@ module.exports = () => {
 		.then(addProjectID)
 		.then(addProjectTitle)
 		.then(setAccessToken)
-		.thent(turnOnGitIgnore)
+		.then(turnOnGitIgnore)
 		.then(npmInstall)
 		.then(() => {
 			rl.close();
