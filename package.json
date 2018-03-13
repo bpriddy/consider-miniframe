@@ -1,6 +1,6 @@
 {
   "name": "considerjs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "repository": "https://github.com/tooldigital/consider-miniframe.git",
   "contributors": [
@@ -19,8 +19,5 @@
   },
   "bin": {
     "considerjs": "bin/consider"
-  },
-  "dependencies": {
-    "yargs": "^11.0.0"
   }
 }
