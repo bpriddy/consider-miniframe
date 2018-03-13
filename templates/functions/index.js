@@ -41,18 +41,23 @@ exports.https = functions.https.onRequest((request, response) => {
 	let action = result.action.toLowerCase();
 	if(action in actionHandlers){
 		let intent = result.metadata.intentName
-		app.data.history.push({action, intent})
+		updateHistory(app, action, intent, result)
 		actionHandlers[action](app, result, intent, ask, considerations, responses)
 	}else{
 		console.error('No action handler found for ' + action + ', query: ' + result.resolvedQuery)
 	}
 })
 
+const updateHistory = (app, action, intent, result) => {
+	app.data._history.push({action, intent})
+}
+
 const initializeAppData = (app) => {
 	console.log('Initialize app data')
+	app.data._basic = {};
+	app.data._history = []
 	app.data.considerations = {};
 	Object.keys(considerations).forEach( k => considerations[k].init(app) );
-	app.data.history = [];
 	app.data.initialized = true;
 }
 
