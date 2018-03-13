@@ -3,6 +3,11 @@ const request = require('request')
 const path = require('path')
 const template = require('es6-template-strings');
 const chalk = require('chalk')
+const readline = require('readline');
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
 const utils = require('./utils');
 const createAction = require('./action');
 
@@ -18,6 +23,8 @@ let rootPath;
 let ignoreList = [
 	'.DS_Store'
 ]
+
+
 
 module.exports = () => {
 	
@@ -47,7 +54,7 @@ module.exports = () => {
 			console.log("\n")
 			console.log(chalk.green("Sync complete!"))
 			console.log("\n")
-			return;
+			rl.close();
 		})
 
 }
@@ -207,8 +214,8 @@ const matchOrSuggestResponses = () => {
 	let toCheck = []
 	return new Promise((resolve, reject) => {
 		syncObj.intents.forEach((int) => {
-			toCheck.push(int.name)
-			toCheck = toCheck.concat(generateParameterOptions(syncObj.entities, int.name, int.parameters))
+			toCheck.push(int.name.toLowerCase())
+			toCheck = toCheck.concat(generateParameterOptions(syncObj.entities, int.name.toLowerCase(), int.parameters))
 		})
 
 		let notFound = toCheck.filter( ch => {
@@ -217,6 +224,8 @@ const matchOrSuggestResponses = () => {
 		let outputText = JSON.stringify(notFound).split(",").join(",\n")
 		fs.writeFileSync(`${rootPath}/responses/SUGGESTIONS_OF_RESPONSES_TO_ADD.json`, outputText)
 		resolve()
+	}).catch("error", (err) => {
+		console.log(chalk.red(err))
 	})
 }
 
@@ -228,7 +237,7 @@ const generateParameterOptions = (arr, name, parameters) => {
 	arr.forEach( e => {
 		if(parameters.indexOf(e.name) > -1) {
 			if(e.entries.length > 1) {
-				let values = e.entries.map( en => en.value )
+				let values = e.entries.map( ent => ent.value )
 				options.push(values)
 			}
 		}
@@ -237,7 +246,7 @@ const generateParameterOptions = (arr, name, parameters) => {
 
 	const createCombos = (base, arr, idx) => {
 		arr.forEach( name => {
-			pattern = `${base}:${name}`
+			pattern = `${base}:${name.toLowerCase()}`
 			combinations.push(pattern)
 			for(var i=idx;i<options.length-1;i++) {
 				createCombos(pattern,options[i+1], i+1)
