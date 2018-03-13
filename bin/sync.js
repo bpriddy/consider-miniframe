@@ -1,3 +1,5 @@
+import { access } from 'fs';
+
 const fs = require('fs')
 const request = require('request')
 const path = require('path')
@@ -31,8 +33,8 @@ module.exports = () => {
 	});
 	
 	rootPath = utils.rootDirInRange()
-	// accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
-	DF.setDevToken(`${rootPath}/.access_token`)
+	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
+	DF.setDevToken(accessToken)
 
 	if(!rootPath) console.error(chalk.red("This must be executed from next to the functions folder or within it !!"));
 	responses = require(`${rootPath}/responses`)
