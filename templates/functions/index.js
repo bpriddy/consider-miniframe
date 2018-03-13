@@ -38,7 +38,7 @@ exports.https = functions.https.onRequest((request, response) => {
 	console.log(result.resolvedQuery, result.action, result.metadata.intentName)
 
 	// map action strings to handlers
-	let action = result.action
+	let action = result.action.toLowerCase();
 	if(action in actionHandlers){
 		let intent = result.metadata.intentName
 		app.data.history.push({action, intent})
