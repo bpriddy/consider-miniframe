@@ -4,6 +4,7 @@ const path = require('path')
 const template = require('es6-template-strings');
 const chalk = require('chalk')
 const readline = require('readline');
+const DF = require('dialogflow-tools')
 let rl; 
 const utils = require('./utils');
 const createAction = require('./action');
@@ -30,7 +31,9 @@ module.exports = () => {
 	});
 	
 	rootPath = utils.rootDirInRange()
-	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
+	// accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
+	DF.setDevToken(`${rootPath}/.access_token`)
+
 	if(!rootPath) console.error(chalk.red("This must be executed from next to the functions folder or within it !!"));
 	responses = require(`${rootPath}/responses`)
 
@@ -63,26 +66,27 @@ module.exports = () => {
 const get = (type, id='')=> {
 	console.log(chalk.yellow(`Retrieving: ${type}, ${id}`))
 	let ep = template(endpoint, {type:type, id:id})
-	return new Promise((resolve, reject) => {
-		let opts = {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-			json: true,
-		}
-		request.get(ep, opts, 
-			(err, res, body) => {
-				if(err) return reject(err)
-				// NOTE: if 'id' is defined only return the body
-				let retObj = (id) ? body : {type:type,json:body} 
-				if(body.status && body.status.code !== 200){
-					reject(retObj)
-				}else {
-					resolve(retObj)
-				}
-			}
-		)
-	})
+	return DF.get(type)
+	// return new Promise((resolve, reject) => {
+	// 	let opts = {
+	// 		headers: {
+	// 			Authorization: `Bearer ${accessToken}`,
+	// 		},
+	// 		json: true,
+	// 	}
+	// 	request.get(ep, opts, 
+	// 		(err, res, body) => {
+	// 			if(err) return reject(err)
+	// 			// NOTE: if 'id' is defined only return the body
+	// 			let retObj = (id) ? body : {type:type,json:body} 
+	// 			if(body.status && body.status.code !== 200){
+	// 				reject(retObj)
+	// 			}else {
+	// 				resolve(retObj)
+	// 			}
+	// 		}
+	// 	)
+	// })
 }
 
 const getEach = (obj) => {
