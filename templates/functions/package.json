@@ -6,10 +6,16 @@
   "contributors": [
     ""
   ],
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
+    "serve": "firebase serve --only functions && firebase functions:logs && open -a Terminal `pwd`",
+    "localtunnel": "pm2 start ./dev/localtunnel.sh -- consider${projectslug} && echo set Webhook Fulfillment URL to https://consider${projectslug}.localtunnel.me/${pID}/us-central1/https && pm2 logs",
+    "deploy": "firebase deploy --only functions"
+  },
   "devDependencies": {},
   "dependencies": {
-    "actions-on-google": "^1.10.0",
-    "firebase-admin": "^5.10.0",
+    "actions-on-google": "^1.9.0",
+    "firebase-admin": "~5.8.1",
     "firebase-functions": "^0.8.1"
   }
 }

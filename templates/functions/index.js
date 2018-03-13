@@ -29,15 +29,15 @@ const ask = (app, inputPrompt, noInputPrompts) => {
 *
 */
 exports.https = functions.https.onRequest((request, response) => {
-	if(!app.data.intialized) initializeAppData(app);
 	let result = request.body.result
+	let app = new DialogflowApp({ request, response })
+	if(!app.data.intialized) initializeAppData(app);
 
 	console.log('\n\n\n\n\n')
 	console.log("==================================================")
 	console.log(result.resolvedQuery, result.action, result.metadata.intentName)
 
 	// map action strings to handlers
-	let app = new DialogflowApp({ request, response })
 	let action = result.action
 	if(action in actionHandlers){
 		let intent = result.metadata.intentName

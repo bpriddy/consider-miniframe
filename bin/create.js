@@ -6,7 +6,7 @@ const chalk = require('chalk');
 const utils = require('./utils')
 
 module.exports = (name) => {
-	console.log(`create consideration: ${name}`)
+	console.log(chalk.green(`create consideration: ${name}`))
 	const source = path.resolve(__dirname, "../templates/considerations/consideration/");
 	const rootDir = utils.rootDirInRange();
 	const destination = `${rootDir}/considerations/${name}`;

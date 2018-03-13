@@ -47,6 +47,7 @@ module.exports = () => {
 			console.log("\n")
 			console.log(chalk.green("Sync complete!"))
 			console.log("\n")
+			return;
 		})
 
 }
@@ -103,7 +104,7 @@ const getEachEntity = (obj) => {
 }
 
 const clean = (obj) => {
-	console.log(chalk.yellow(`Cleaning: ${obj.type}`))
+	console.log(chalk.yellow(`\nCleaning: ${obj.type}\n`))
 	return new Promise((resolve, reject) => {
 		obj.json = obj.json.map( (i) => {
 			if(obj.type === "intents") {
@@ -141,7 +142,7 @@ const getLocalActions = () => {
 
 
 const matchRemoteActionsToLocal = (localActions) => {
-	console.log(chalk.yellow(`Compare remote actions to local`))
+	console.log(chalk.yellow(`\nCompare remote actions to local\n`))
 	return new Promise((resolve, reject) => {
 		let newActions = []
 		syncObj.intents.forEach( (i) => {
