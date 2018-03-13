@@ -1,6 +1,7 @@
-import { access } from 'fs';
+// import { access } from 'fs';
 
 const fs = require('fs')
+const access = fs.access
 const request = require('request')
 const path = require('path')
 const template = require('es6-template-strings');
@@ -67,8 +68,11 @@ module.exports = () => {
 
 const get = (type, id='')=> {
 	console.log(chalk.yellow(`Retrieving: ${type}, ${id}`))
-	let ep = template(endpoint, {type:type, id:id})
-	return DF.get(type)
+	// let ep = template(endpoint, {type:type, id:id})
+	return DF.get(type, {id}).then(result => new Promise((resolve, reject) => {
+		let retObj = (id) ? result : {type, json:result} 
+		resolve(retObj)
+	}))
 	// return new Promise((resolve, reject) => {
 	// 	let opts = {
 	// 		headers: {
@@ -160,11 +164,11 @@ const matchRemoteActionsToLocal = (localActions) => {
 	return new Promise((resolve, reject) => {
 		let newActions = []
 		syncObj.intents.forEach( (i) => {
+			if(!i.action) return
 			let matched = false
 			localActions.forEach( (a) => {
 				if(a === i.action.toLowerCase()) {
 					matched = true;
-					//TODO: add intent key to intents.json of that action
 				}
 			})
 			if(!matched) {
@@ -176,14 +180,14 @@ const matchRemoteActionsToLocal = (localActions) => {
 }
 
 const addNewActions = (newActions) => {
-	return new Promise((resolve, reject) => {
+	// return new Promise((resolve, reject) => {
 		let actionPromises = newActions.map(a => {
 			return createAction(a);
 		})
-		Promise.all(actionPromises)
-			.then(() => { resolve() })
+		return Promise.all(actionPromises)
+			// .then(() => { resolve() })
 			.catch(e => console.error(e))
-	})
+	// })
 }
 
 const matchLocalActionsToRemote = (localActions) => {
@@ -192,6 +196,7 @@ const matchLocalActionsToRemote = (localActions) => {
 		localActions.forEach( (a) => {
 			let matched = false
 			syncObj.intents.forEach( (i) => {
+				if(!i.action) return
 				if(a === i.action.toLowerCase()) {
 					matched = true
 				}
@@ -206,13 +211,14 @@ const addIntentsRefToActions = () => {
 	console.log(chalk.yellow(`Add intent refs to actions`))
 	return new Promise((resolve, reject) => {
 		syncObj.intents.forEach((i) => {
+			if(!i.action) return
 			let action = i.action.toLowerCase();
 			let intentsJSON = fs.readFileSync(`${rootPath}/actions/${action}/intents.json`, 'utf8')
 			intentsJSON = JSON.parse(intentsJSON)
 			if(intentsJSON.indexOf(i.name) < 0) intentsJSON.push(i.name);
 			fs.writeFileSync(`${rootPath}/actions/${action}/intents.json`, JSON.stringify(intentsJSON))	
-			resolve()	
 		})
+		resolve()
 	})
 }
 
