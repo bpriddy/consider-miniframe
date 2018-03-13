@@ -7,7 +7,7 @@
     "Ben Priddy <ben.priddy@toolofna.com> (https://github.com/benoftoolofna)",
     "Josh Beckwith <josh.beckwith@toolofna.com> (https://github.com/positlabs)"
   ],
-  "devDependencies": {
+  "dependencies": {
     "eslint": "^4.18.2",
     "es6-template-strings": "^2.0.1",
     "ncp": "^2.0.0",
