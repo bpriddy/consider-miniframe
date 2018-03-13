@@ -49,22 +49,32 @@ const cloneDirectory = (source, destination) => {
 const addProjectID = () => {
 	return new Promise((resolve, reject) => {
 		const rootDir = utils.rootDirInRange();
-		rl.question('Please enter your Google Actions Project ID: ', (pID) => {
-			utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:pID});
-			console.log(`your project ID: ${pID}`);
-			resolve(pID);
-		});
+		const tryToGetID = () => {
+			rl.question('Please enter your Google Actions Project ID: ', (pID) => {
+				if(pID.length === 0) return tryToGetID();
+				utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:pID});
+				console.log(`your project ID: ${pID}`);
+				resolve(pID);
+			});
+		}
+		tryToGetID()
+			
 	})
 }
 
 const addProjectTitle = (pID) => {
 	return new Promise((resolve, reject) => {
 		const rootDir = utils.rootDirInRange();
-		rl.question('Please choose a project slug: ', (projectslug) => {
-			utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:projectslug, pID: pID});
-			console.log(`your project slug: ${projectslug}`);
-			resolve();
-		});
+		const tryToGetSlug = () => {
+			rl.question('Please choose a project slug: ', (projectslug) => {
+				if(projectslug.length === 0) return tryToGetSlug();
+				utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:projectslug, pID: pID});
+				console.log(`your project slug: ${projectslug}`);
+				resolve();
+			});
+		}
+		tryToGetSlug()
+		
 	})
 }
 

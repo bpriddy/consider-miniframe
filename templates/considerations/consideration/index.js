@@ -19,7 +19,7 @@ module.exports = {
 	*	persisted in the app.data object initialized here 
 	*/
 	init(app) {
-		app.data.considerations.hints = {
+		app.data.considerations.${name} = {
 			//add stateful data here
 		}
 	},

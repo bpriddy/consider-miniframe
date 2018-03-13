@@ -6,7 +6,7 @@ const functions = require('firebase-functions')
 const utils = require('./lib/utils')
 const config = require('./consider.json')
 
-const actionsHandlers = utils.requireFoldersIntoObject('./actions')
+const actionHandlers = utils.requireFoldersIntoObject('./actions')
 const considerations = utils.requireFoldersIntoObject('./considerations')
 
 const responses = require('./responses')
@@ -48,10 +48,10 @@ exports.https = functions.https.onRequest((request, response) => {
 	}
 })
 
-
 const initializeAppData = (app) => {
 	console.log('Initialize app data')
-	considerations.forEach( c => c.init(app) );
+	app.data.considerations = {};
+	Object.keys(considerations).forEach( k => considerations[k].init(app) );
 	app.data.history = [];
 	app.data.initialized = true;
 }
