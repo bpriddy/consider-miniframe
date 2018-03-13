@@ -3,14 +3,15 @@ const ncp = require('ncp')
 const fs = require('fs');
 const chalk = require('chalk');
 const readline = require('readline');
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
 
 const utils = require('./utils')
 
 module.exports = (name) => {
+	
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
 	console.log(chalk.green(`create consideration: ${name}`))
 	const source = path.resolve(__dirname, "../templates/considerations/consideration/");
 	const rootDir = utils.rootDirInRange();

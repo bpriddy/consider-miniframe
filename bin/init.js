@@ -4,16 +4,16 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { spawn } = require('child_process');
 const readline = require('readline');
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
 
 const utils = require('./utils');
 
 let rootDir;
 
 module.exports = () => {
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
 	console.log(chalk.green('\n\nConsider.js initializing functions webhook project'))
 	console.log(chalk.green("=================================\n"))
 

@@ -4,10 +4,6 @@ const path = require('path')
 const template = require('es6-template-strings');
 const chalk = require('chalk')
 const readline = require('readline');
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout
-});
 const utils = require('./utils');
 const createAction = require('./action');
 
@@ -27,6 +23,10 @@ let ignoreList = [
 
 
 module.exports = () => {
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
 	
 	rootPath = utils.rootDirInRange()
 	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
