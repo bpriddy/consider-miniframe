@@ -19,7 +19,9 @@ module.exports = {
 		} else if(fs.existsSync(path.resolve(process.cwd(), "./consider.json"))) {
 			return path.resolve(process.cwd(), "./");
 		} else {
-			return console.error(chalk.red(`!! The create method must be run from the root of the functions folder !!`))
+			let err = `!! This method must be run from the root of the functions folder !!`
+			console.error(chalk.red(err))
+			throw err
 		}
 	},
 	openTemplateSave(file, obj) {

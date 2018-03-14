@@ -1,9 +1,13 @@
+// import { access } from 'fs';
+
 const fs = require('fs')
+const access = fs.access
 const request = require('request')
 const path = require('path')
 const template = require('es6-template-strings');
 const chalk = require('chalk')
 const readline = require('readline');
+const DF = require('dialogflow-tools')
 let rl; 
 const utils = require('./utils');
 const createAction = require('./action');
@@ -23,14 +27,16 @@ let ignoreList = [
 
 
 
-module.exports = () => {
+module.exports = (env) => {
 	rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
 	
 	rootPath = utils.rootDirInRange()
-	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
+	accessToken = fs.readFileSync(`${rootPath}/.access_tokens/${env}`, 'utf8')
+	DF.setDevToken(accessToken)
+
 	if(!rootPath) console.error(chalk.red("This must be executed from next to the functions folder or within it !!"));
 	responses = require(`${rootPath}/responses`)
 
@@ -62,27 +68,11 @@ module.exports = () => {
 
 const get = (type, id='')=> {
 	console.log(chalk.yellow(`Retrieving: ${type}, ${id}`))
-	let ep = template(endpoint, {type:type, id:id})
-	return new Promise((resolve, reject) => {
-		let opts = {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-			json: true,
-		}
-		request.get(ep, opts, 
-			(err, res, body) => {
-				if(err) return reject(err)
-				// NOTE: if 'id' is defined only return the body
-				let retObj = (id) ? body : {type:type,json:body} 
-				if(body.status && body.status.code !== 200){
-					reject(retObj)
-				}else {
-					resolve(retObj)
-				}
-			}
-		)
-	})
+	// let ep = template(endpoint, {type:type, id:id})
+	return DF.get(type, {id}).then(result => new Promise((resolve, reject) => {
+		let retObj = (id) ? result : {type, json:result} 
+		resolve(retObj)
+	}))
 }
 
 const getEach = (obj) => {
@@ -98,22 +88,23 @@ const getEach = (obj) => {
 
 
 const getEachEntity = (obj) => {
-	return new Promise((resolve, reject) => {
-		let entities = syncObj.intents.map( i => i.parameters )
-		entities = entities.filter( e => e.length > 0 )
-		let flat = []
-		entities.forEach((p) => {
-			p.forEach( (e) => {
-				if(flat.indexOf(e.name) < 0) flat.push(e.name);
-			})
+	// return new Promise((resolve, reject) => {
+	let entities = syncObj.intents.map( i => i.parameters )
+	entities = entities.filter( e => e.length > 0 )
+	let flat = []
+	entities.forEach((p) => {
+		p.forEach( (e) => {
+			if(flat.indexOf(e.name) < 0) flat.push(e.name);
 		})
-		resolve()
 	})
+	// resolve()
+	// })
+	return Promise.resolve()
 }
 
 const clean = (obj) => {
 	console.log(chalk.yellow(`\nCleaning: ${obj.type}\n`))
-	return new Promise((resolve, reject) => {
+	// return new Promise((resolve, reject) => {
 		obj.json = obj.json.map( (i) => {
 			if(obj.type === "intents") {
 				let par = i.responses[0].parameters.map( p => p.name )
@@ -126,87 +117,90 @@ const clean = (obj) => {
 			} else {
 				return i
 			}
-			
 		})
-		resolve(obj)
-	})
+		// resolve(obj)
+	// })
+	return Promise.resolve(obj)
 }
 
 const store = (obj) => {
-	return new Promise((resolve, reject) => {
-		syncObj[obj.type] = obj.json
-		resolve()
-	})
+	// return new Promise((resolve, reject) => {
+	syncObj[obj.type] = obj.json
+		// resolve()
+	// })
+	return Promise.resolve()
 }
 
 const getLocalActions = () => {
-	return new Promise((resolve, reject) => {
+	// return new Promise((resolve, reject) => {
 		let actions = fs.readdirSync(path.resolve(rootPath, "./actions"));
 		actions = actions.filter( a => ignoreList.indexOf(a) < 0 )
-		resolve(actions)
-	})
+		// resolve(actions)
+	// })
+	return Promise.resolve(actions)
 }
 
 
 
 const matchRemoteActionsToLocal = (localActions) => {
 	console.log(chalk.yellow(`\nCompare remote actions to local\n`))
-	return new Promise((resolve, reject) => {
-		let newActions = []
-		syncObj.intents.forEach( (i) => {
-			let matched = false
-			localActions.forEach( (a) => {
-				if(a === i.action.toLowerCase()) {
-					matched = true;
-					//TODO: add intent key to intents.json of that action
-				}
-			})
-			if(!matched) {
-				newActions.push(i.action.toLowerCase())
+	// return new Promise((resolve, reject) => {
+	let newActions = []
+	syncObj.intents.forEach( (i) => {
+		if(!i.action) return
+		let matched = false
+		localActions.forEach( (a) => {
+			if(a === i.action.toLowerCase()) {
+				matched = true;
 			}
 		})
-		resolve(newActions)
+		if(!matched) {
+			newActions.push(i.action.toLowerCase())
+		}
 	})
+		// resolve(newActions)
+	// })
+	return Promise.resolve(newActions)
 }
 
 const addNewActions = (newActions) => {
-	return new Promise((resolve, reject) => {
 		let actionPromises = newActions.map(a => {
 			return createAction(a);
 		})
-		Promise.all(actionPromises)
-			.then(() => { resolve() })
+		return Promise.all(actionPromises)
 			.catch(e => console.error(e))
-	})
 }
 
 const matchLocalActionsToRemote = (localActions) => {
 	console.log(chalk.yellow(`Compare local actions to remote`))
-	return new Promise((resolve, reject) => {
-		localActions.forEach( (a) => {
-			let matched = false
-			syncObj.intents.forEach( (i) => {
-				if(a === i.action.toLowerCase()) {
-					matched = true
-				}
-			})
-			if(!matched) console.log(chalk.magenta(`${a} action is on local, but not on Dialogflow`));
+	// return new Promise((resolve, reject) => {
+	localActions.forEach( (a) => {
+		let matched = false
+		syncObj.intents.forEach( (i) => {
+			if(!i.action) return
+			if(a === i.action.toLowerCase()) {
+				matched = true
+			}
 		})
-		resolve()
+		if(!matched) console.log(chalk.magenta(`${a} action is on local, but not on Dialogflow`));
 	})
+		// resolve()
+	// })
+	return Promise.resolve()
 }
 
 const addIntentsRefToActions = () => {
 	console.log(chalk.yellow(`Add intent refs to actions`))
 	return new Promise((resolve, reject) => {
 		syncObj.intents.forEach((i) => {
+			if(!i.action) return
 			let action = i.action.toLowerCase();
 			let intentsJSON = fs.readFileSync(`${rootPath}/actions/${action}/intents.json`, 'utf8')
 			intentsJSON = JSON.parse(intentsJSON)
 			if(intentsJSON.indexOf(i.name) < 0) intentsJSON.push(i.name);
 			fs.writeFileSync(`${rootPath}/actions/${action}/intents.json`, JSON.stringify(intentsJSON))	
-			resolve()	
 		})
+		resolve()
 	})
 }
 
@@ -262,12 +256,4 @@ const generateParameterOptions = (arr, name, parameters) => {
 	return combinations;
 
 }
-
-
-
-
-
-
-
-
 

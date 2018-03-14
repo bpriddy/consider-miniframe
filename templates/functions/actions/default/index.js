@@ -1,4 +1,4 @@
-/** ${name}: action handler */
+/** default: action handler */
 
 /**
 *	Intents mapping to this action. This list is loose, 
@@ -19,7 +19,7 @@ module.exports = (app, result, intent, considerations) => {
 	*		considerations:[{name:val}]
 	*	})
 	*/
-	let response = responses.find(app,{intent})
+	let response = responses.find(app,{intent:intent})
 	response = 'this is a default response for the ${name} action.  Please hook up the correct response.';
 
 	considerations.history.update(result,response)

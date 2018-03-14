@@ -32,8 +32,8 @@ module.exports = {
 	},
 
 	/** called once per intent from actions including this consideration */
-	update(response) {
-		return module.exports.construct(response, "option1");
+	update(response, option) {
+		return module.exports.construct(response, option);
 	}
 
 }

@@ -1,4 +1,4 @@
-/** hints: Consideration module  */
+/** history: Consideration module  */
 
 /**
 *	optional data file for if the consideration 
@@ -19,17 +19,18 @@ module.exports = {
 	*	persisted in the app.data object initialized here 
 	*/
 	init(app) {
-		app.data.considerations.hints = {
-			idx:0
-		}
+		app.data.considerations.history = []
 	},
 
 	/** called once per intent from actions including this consideration */
-	update(app, result, intent, ask) {
-		let dHints = app.data.considerations.hints
-		let hint = data[dHints.idx];
-		dHints.idx = (dHints.idx<data.length-1) ? dHints.idx+1 : 0;
-		return hint
+	update(result,response) {
+		let intent = result.metadata.intentName;
+		let action = result.action.toLowerCase();
+		app.data.considerations.history.push({intent,action,response})
+	},
+
+	getLast(){
+		return app.data.considerations.history[app.data.considerations.history.length - 1 ];
 	}
 
 }

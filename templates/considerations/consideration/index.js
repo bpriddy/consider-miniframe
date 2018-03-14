@@ -25,7 +25,7 @@ module.exports = {
 	},
 
 	/** called once per intent from actions including this consideration */
-	update(app, result, intent, ask) {
+	update(app, result, intent) {
 		
 	}
 
