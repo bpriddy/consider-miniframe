@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint .",
-    "serve": "firebase serve --only functions && firebase functions:logs",
+    "serve": "firebase serve --only functions",
     "localtunnel": "pm2 start ./dev/localtunnel.sh -- consider${projectslug} && echo set Webhook Fulfillment URL to https://consider${projectslug}.localtunnel.me/${pID}/us-central1/https then run 'pm2 logs'",
     "deploy": "firebase deploy --only functions"
   },
