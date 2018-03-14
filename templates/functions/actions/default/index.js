@@ -22,6 +22,6 @@ module.exports = (app, result, intent, considerations) => {
 	let response = responses.find(app,{intent:intent})
 	response = 'this is a default response for the ${name} action.  Please hook up the correct response.';
 
-	considerations.history.update(result,response)
+	considerations.history.update(app,result,response)
 	app.ask(response)
 }

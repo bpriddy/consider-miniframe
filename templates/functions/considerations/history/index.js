@@ -23,13 +23,13 @@ module.exports = {
 	},
 
 	/** called once per intent from actions including this consideration */
-	update(result,response) {
+	update(app,result,response) {
 		let intent = result.metadata.intentName;
 		let action = result.action.toLowerCase();
 		app.data.considerations.history.push({intent,action,response})
 	},
 
-	getLast(){
+	getLast(app){
 		return app.data.considerations.history[app.data.considerations.history.length - 1 ];
 	}
 

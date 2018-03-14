@@ -10,5 +10,5 @@ const responses = require('../../responses')
 
 module.exports = (app, result, intent, considerations) => {
 	//NOTE: no input followups must be recalculated, as they will not be persisted in history
-	app.ask(considerations.history.getLast().response)
+	app.ask(considerations.history.getLast(app).response)
 }

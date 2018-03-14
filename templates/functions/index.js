@@ -18,7 +18,7 @@ const responses = require('./responses')
 exports.https = functions.https.onRequest((request, response) => {
 	let result = request.body.result
 	let app = new DialogflowApp({ request, response })
-	if(!app.data.intialized) initializeAppData(app);
+	if(!app.data.initialized) initializeAppData(app);
 
 	console.log('\n\n\n\n\n')
 	console.log("==================================================")
@@ -26,8 +26,8 @@ exports.https = functions.https.onRequest((request, response) => {
 
 	// map action strings to handlers
 	let action = result.action.toLowerCase();
+	let intent = result.metadata.intentName;
 	if(action in actionHandlers){
-		let intent = result.metadata.intentName
 		actionHandlers[action](app, result, intent, considerations, responses)
 	}else{
 		actionHandlers.default(app, result, intent, considerations, responses)
