@@ -27,14 +27,14 @@ let ignoreList = [
 
 
 
-module.exports = () => {
+module.exports = (env) => {
 	rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
 	
 	rootPath = utils.rootDirInRange()
-	accessToken = fs.readFileSync(`${rootPath}/.access_token`, 'utf8')
+	accessToken = fs.readFileSync(`${rootPath}/.access_tokens/${env}`, 'utf8')
 	DF.setDevToken(accessToken)
 
 	if(!rootPath) console.error(chalk.red("This must be executed from next to the functions folder or within it !!"));

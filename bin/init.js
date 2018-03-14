@@ -103,7 +103,8 @@ const templateProjectSettings = () => {
 	return new Promise((resolve, reject) => {
 		utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:projectID});
 		utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:slug, pID: projectID});
-		utils.openTemplateSave(`${rootDir}/.access_token`, {aT:accessToken});
+		// utils.openTemplateSave(`${rootDir}/.access_token`, {aT:accessToken});
+		fs.writeFileSync(`${rootDir}/.access_tokens/${slug}`, accessToken)
 		resolve();
 	})
 }

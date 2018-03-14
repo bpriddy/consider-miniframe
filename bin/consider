@@ -35,10 +35,10 @@ const args = require('yargs')
 		handler: (yargs) => { return action(yargs.name); }
 	})
 	.command({
-		command: 'sync',
+		command: 'sync <env>',
 		aliases: ['s'],
 		desc: 'sync with remote',
-		handler: sync
+		handler: (yargs) => { return sync(yargs.env); }
 	})
 	// .demandCommand(1, 'You need at least one command before moving on')
 	// .usage('\nScaffold dialogflow webhook functions folder with actions, considerations and responses for dialogflow app.\n')
