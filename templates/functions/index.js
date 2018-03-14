@@ -1,5 +1,4 @@
 
-
 const { DialogflowApp } = require('actions-on-google')
 const functions = require('firebase-functions')
 
@@ -10,18 +9,6 @@ const actionHandlers = utils.requireFoldersIntoObject('./actions')
 const considerations = utils.requireFoldersIntoObject('./considerations')
 
 const responses = require('./responses')
-
-
-/**
-*
-*	Wrapper for app.ask that tracks previous responses so we can repeat them if needed
-*
-*/
-const ask = (app, inputPrompt, noInputPrompts) => {
-	app.data.prevInputPrompt = inputPrompt
-	app.data.prevNoInputPrompts = noInputPrompts
-	app.ask(inputPrompt, noInputPrompts)
-}
 
 /**
 *
@@ -41,21 +28,14 @@ exports.https = functions.https.onRequest((request, response) => {
 	let action = result.action.toLowerCase();
 	if(action in actionHandlers){
 		let intent = result.metadata.intentName
-		updateHistory(app, action, intent, result)
-		actionHandlers[action](app, result, intent, ask, considerations, responses)
+		actionHandlers[action](app, result, intent, considerations, responses)
 	}else{
-		console.error('No action handler found for ' + action + ', query: ' + result.resolvedQuery)
+		actionHandlers.default(app, result, intent, considerations, responses)
 	}
 })
 
-const updateHistory = (app, action, intent, result) => {
-	app.data._history.push({action, intent})
-}
-
 const initializeAppData = (app) => {
 	console.log('Initialize app data')
-	app.data._basic = {};
-	app.data._history = []
 	app.data.considerations = {};
 	Object.keys(considerations).forEach( k => considerations[k].init(app) );
 	app.data.initialized = true;

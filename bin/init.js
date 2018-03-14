@@ -111,7 +111,7 @@ const templateProjectSettings = () => {
 
 const cleanFiles = () => {
 	return new Promise((resolve, reject) => {
-		fs.unlinkSync(`${rootDir}/actions/.ignore`)
+		// fs.unlinkSync(`${rootDir}/actions/.ignore`)
 		fs.renameSync(`${rootDir}/_.gitignore`, `${rootDir}/.gitignore`)
 		resolve()	
 	})
