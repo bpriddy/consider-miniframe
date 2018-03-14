@@ -9,7 +9,6 @@ const data = require('./data')
 
 module.exports = {
 	find (app, query) {
-		if(app.data) app.data._history[app.data._history.length-1].response = query;
 		return false
 		
 		//TODO: accept parameters, and considerations to route response
