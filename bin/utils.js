@@ -28,5 +28,8 @@ module.exports = {
 		let fileContents = fs.readFileSync(file, 'utf8');
 		let templated = template(fileContents, obj);
 		fs.writeFileSync(path.resolve(file), templated);
+	},
+	square(num) {
+		return num*num;
 	}
 }
