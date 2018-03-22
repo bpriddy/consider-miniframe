@@ -15,7 +15,7 @@ module.exports = (name) => {
 	return new Promise((resolve, reject) => {
 		console.log(`create action: ${name}`)
 		const source = path.resolve(__dirname, "../templates/actions/action/");
-		const rootDir = utils.rootDirInRange();
+		const rootDir = utils.ifFileInRangeRetDir('consider.json', 2);
 		const destination = `${rootDir}/actions/${name}`;
 		rl.close()
 
