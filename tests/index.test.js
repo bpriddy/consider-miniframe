@@ -1,5 +1,3 @@
-// mock DialogFlowApp
-// stub request and response
 
 jest.mock('actions-on-google')
 jest.mock('firebase-functions')
@@ -9,11 +7,11 @@ jest.mock('../templates/functions/lib/utils', () => require('./__mocks__/utils')
 console.log = jest.fn()
 
 const stub = {
-	"./actions": {
+	"actions": {
 		test: jest.fn(),
 		default: jest.fn()
 	},
-	"./considerations": {
+	"considerations": {
 		test: {
 			init: jest.fn(),
 			update: jest.fn()
@@ -41,7 +39,6 @@ let stubRequest = {
 
 let app;
 beforeEach(() => {
-	console.log('before each')
 	require('firebase-functions')._setRequest(stubRequest)
 	require('firebase-functions')._setResponse({})
 	require('../templates/functions/lib/utils')._setStub(stub)
@@ -54,15 +51,15 @@ afterEach(() => {
 describe( "consider index", () => {
 	describe( ".https", () => {
 		test("should initialize each consideration if app.data.initialized is falsey", () => {
-			expect(stub["./considerations"].test.init).toHaveBeenCalled()
-			expect(stub["./considerations"].test2.init).toHaveBeenCalled()
+			expect(stub["considerations"].test.init).toHaveBeenCalled()
+			expect(stub["considerations"].test2.init).toHaveBeenCalled()
 		})
 		test("should call the correct action in the actionHandlers object", () => {
 			stubRequest.body.result.action = "dogs" //NOTE: this is an ugly way to change the value for the next test
-			expect(stub["./actions"].test).toBeCalled()
+			expect(stub["actions"].test).toBeCalled()
 		})
 		test("should call the default action if no action is matched in the actionHandlers", () => {
-			expect(stub["./actions"].default).toBeCalled()
+			expect(stub["actions"].default).toBeCalled()
 		})
 	})
 })

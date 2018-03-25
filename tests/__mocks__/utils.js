@@ -2,6 +2,8 @@
 let stub
 module.exports = {
 	requireFoldersIntoObject(path) {
+		path = path.split("/")
+		path = path[path.length-1]
 		if(stub) {
 			return stub[path]
 		} else {

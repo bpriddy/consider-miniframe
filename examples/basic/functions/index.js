@@ -1,27 +1,26 @@
 
-
 const { DialogflowApp } = require('actions-on-google')
 const functions = require('firebase-functions')
+const path = require('path')
 
 const utils = require('./lib/utils')
 const config = require('./consider.json')
 
-const actionsHandlers = utils.requireFoldersIntoObject('./actions')
-const considerations = utils.requireFoldersIntoObject('./considerations')
+const actionHandlers = utils.requireFoldersIntoObject(path.resolve(__dirname, './actions'))
+const considerations = utils.requireFoldersIntoObject(path.resolve(__dirname, './considerations'))
 
 const responses = require('./responses')
 
 
-/**
-*
-*	Wrapper for app.ask that tracks previous responses so we can repeat them if needed
-*
-*/
-const ask = (app, inputPrompt, noInputPrompts) => {
-	app.data.prevInputPrompt = inputPrompt
-	app.data.prevNoInputPrompts = noInputPrompts
-	app.ask(inputPrompt, noInputPrompts)
+const initializeAppData = (app) => {
+	console.log('Initialize app data')
+	app.data.considerations = {};
+	if(Object.keys(considerations).length) {
+		Object.keys(considerations).forEach( k => considerations[k].init(app) );	
+	}
+	app.data.initialized = true;
 }
+
 
 /**
 *
@@ -29,32 +28,24 @@ const ask = (app, inputPrompt, noInputPrompts) => {
 *
 */
 exports.https = functions.https.onRequest((request, response) => {
-	if(!app.data.intialized) initializeAppData(app);
 	let result = request.body.result
+	let app = new DialogflowApp({ request, response })
+	if(!app.data.initialized) initializeAppData(app);
 
 	console.log('\n\n\n\n\n')
 	console.log("==================================================")
 	console.log(result.resolvedQuery, result.action, result.metadata.intentName)
 
 	// map action strings to handlers
-	let app = new DialogflowApp({ request, response })
-	let action = result.action
+	let action = result.action.toLowerCase();
+	let intent = result.metadata.intentName;
 	if(action in actionHandlers){
-		let intent = result.metadata.intentName
-		app.data.history.push({action, intent})
-		actionHandlers[action](app, result, intent, ask, considerations, responses)
+		actionHandlers[action](app, result, intent, considerations, responses)
 	}else{
-		console.error('No action handler found for ' + action + ', query: ' + result.resolvedQuery)
+		actionHandlers.default(app, result, intent, considerations, responses)
 	}
 })
 
-
-const initializeAppData = (app) => {
-	console.log('Initialize app data')
-	considerations.forEach( c => c.init(app) );
-	app.data.history = [];
-	app.data.initialized = true;
-}
 
 /**
 *
