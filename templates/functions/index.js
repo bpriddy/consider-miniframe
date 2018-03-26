@@ -1,14 +1,26 @@
 
 const { DialogflowApp } = require('actions-on-google')
 const functions = require('firebase-functions')
+const path = require('path')
 
 const utils = require('./lib/utils')
 const config = require('./consider.json')
 
-const actionHandlers = utils.requireFoldersIntoObject('./actions')
-const considerations = utils.requireFoldersIntoObject('./considerations')
+const actionHandlers = utils.requireFoldersIntoObject(path.resolve(__dirname, './actions'))
+const considerations = utils.requireFoldersIntoObject(path.resolve(__dirname, './considerations'))
 
 const responses = require('./responses')
+
+
+const initializeAppData = (app) => {
+	console.log('Initialize app data')
+	app.data.considerations = {};
+	if(Object.keys(considerations).length) {
+		Object.keys(considerations).forEach( k => considerations[k].init(app) );	
+	}
+	app.data.initialized = true;
+}
+
 
 /**
 *
@@ -34,12 +46,6 @@ exports.https = functions.https.onRequest((request, response) => {
 	}
 })
 
-const initializeAppData = (app) => {
-	console.log('Initialize app data')
-	app.data.considerations = {};
-	Object.keys(considerations).forEach( k => considerations[k].init(app) );
-	app.data.initialized = true;
-}
 
 /**
 *

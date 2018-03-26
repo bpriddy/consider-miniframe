@@ -1,0 +1,13 @@
+language: node_js
+sudo: false
+node_js:
+  - "7.10"
+cache:
+  directories:
+    - "node_modules"
+install:
+  - npm install
+before_script:
+  - npm install -g jest
+script:
+  - npm test

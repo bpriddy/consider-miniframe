@@ -19,9 +19,10 @@ module.exports = (app, result, intent, considerations) => {
 	*		considerations:[{name:val}]
 	*	})
 	*/
-	let response = responses.find(app,{intent})
-	response = 'this is a default response for the ${name} action.  Please hook up the correct response.';
+	let response = result.fulfillment.speech || 
+				responses.find(app,{intent:intent}) ||
+				'this is a default response for the default action.  Please hook up the correct response.';
 
-	considerations.history.update(result,response)
+	considerations.history.update(app,result,response)
 	app.ask(response)
 }

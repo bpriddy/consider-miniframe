@@ -33,7 +33,7 @@ module.exports = (env) => {
 		output: process.stdout
 	});
 	
-	rootPath = utils.rootDirInRange()
+	rootPath = utils.ifFileInRangeRetDir('consider.json', 2);
 	accessToken = fs.readFileSync(`${rootPath}/.access_tokens/${env}`, 'utf8')
 	DF.setDevToken(accessToken)
 

@@ -1,4 +1,4 @@
-/** dogs: Consideration module  */
+/** voices: Consideration module  */
 
 /**
 *	optional data file for if the consideration 
@@ -19,14 +19,21 @@ module.exports = {
 	*	persisted in the app.data object initialized here 
 	*/
 	init(app) {
-		app.data.considerations.hints = {
+		app.data.considerations.voices = {
 			//add stateful data here
 		}
 	},
 
+	construct(text, option) {
+		return `
+			<voice gender="${config[option].gender}" variant="${config[option].variant}">
+				<prosody rate="${config[option].rate}" pitch="${config[option].pitch}">${text}</prosody>
+			</voice>`;
+	},
+
 	/** called once per intent from actions including this consideration */
-	update(app, result, intent, ask) {
-		
+	update(response, option) {
+		return module.exports.construct(response, option);
 	}
 
 }

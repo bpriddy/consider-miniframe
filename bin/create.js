@@ -14,7 +14,7 @@ module.exports = (name) => {
 	});
 	console.log(chalk.green(`create consideration: ${name}`))
 	const source = path.resolve(__dirname, "../templates/considerations/consideration/");
-	const rootDir = utils.rootDirInRange();
+	const rootDir = utils.ifFileInRangeRetDir('consider.json', 2);
 	const destination = `${rootDir}/considerations/${name}`;
 	rl.close();
 

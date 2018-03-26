@@ -1,5 +1,5 @@
 {
-  "name": "name",
+  "name": "consider${projectslug}",
   "version": "1.0.0",
   "license": "MIT",
   "repository": "repo",
@@ -16,6 +16,6 @@
   "dependencies": {
     "actions-on-google": "^1.9.0",
     "firebase-admin": "~5.8.1",
-    "firebase-functions": "^0.8.1"
+    "firebase-functions": "0.8.1"
   }
 }

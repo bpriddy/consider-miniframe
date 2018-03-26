@@ -1,15 +1,21 @@
 {
-  "name": "name",
+  "name": "considertest",
   "version": "1.0.0",
   "license": "MIT",
   "repository": "repo",
   "contributors": [
     ""
   ],
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
+    "serve": "firebase serve --only functions && firebase functions:logs",
+    "localtunnel": "pm2 start ./dev/localtunnel.sh -- considertest && echo set Webhook Fulfillment URL to https://considertest.localtunnel.me/1234/us-central1/https then run 'pm2 logs'",
+    "deploy": "firebase deploy --only functions"
+  },
   "devDependencies": {},
   "dependencies": {
-    "actions-on-google": "^1.10.0",
-    "firebase-admin": "^5.10.0",
-    "firebase-functions": "^0.8.1"
+    "actions-on-google": "^1.9.0",
+    "firebase-admin": "~5.8.1",
+    "firebase-functions": "0.8.1"
   }
 }

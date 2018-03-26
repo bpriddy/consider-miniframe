@@ -17,13 +17,13 @@ module.exports = () => {
 	console.log(chalk.green('\n\nConsider.js initializing functions webhook project'))
 	console.log(chalk.green("=================================\n"))
 
-	setProjectID()
-		.then(setProjectTitle)
-		.then(setAccessToken)
-		.then(cloneDirectory)
-		.then(cleanFiles)
-		.then(templateProjectSettings)
-		.then(npmInstall)
+	exports.setProjectID()
+		.then(exports.setProjectTitle)
+		.then(exports.setAccessToken)
+		.then(exports.cloneDirectory)
+		.then(exports.cleanFiles)
+		.then(exports.templateProjectSettings)
+		.then(exports.npmInstall)
 		.then(() => {
 			rl.close();
 			console.log(
@@ -34,7 +34,7 @@ module.exports = () => {
 		})
 }
 
-const setProjectID = () => {
+exports.setProjectID = () => {
 	return new Promise((resolve, reject) => {
 		const tryToGetID = () => {
 			rl.question('Please enter your Google Actions Project ID: ', (pID) => {
@@ -44,14 +44,13 @@ const setProjectID = () => {
 			});
 		}
 		tryToGetID()
-			
 	})
 }
 
 
 
 
-const setProjectTitle = (pID) => {
+exports.setProjectTitle = (pID) => {
 	return new Promise((resolve, reject) => {
 		const tryToGetSlug = () => {
 			rl.question('Please choose a project slug: ', (projectslug) => {
@@ -61,12 +60,11 @@ const setProjectTitle = (pID) => {
 			});
 		}
 		tryToGetSlug()
-		
 	})
 }
 
 
-const setAccessToken = () => {
+exports.setAccessToken = () => {
 	return new Promise((resolve, reject) => {
 		const tryToGetAT = () => {
 			rl.question('Please enter your Dialogflow Developer access token: ', (aT) => {
@@ -76,11 +74,10 @@ const setAccessToken = () => {
 			});
 		}
 		tryToGetAT()
-			
 	})
 }
 
-const cloneDirectory = (source, destination) => {
+exports.cloneDirectory = (source, destination) => {
 	return new Promise((resolve, reject) => {
 
 		let source = path.resolve(__dirname, "../templates/functions/");
@@ -93,33 +90,29 @@ const cloneDirectory = (source, destination) => {
 		ncp(source, destination, (err) => {
 			if (err) return console.error(err);
 			console.log(chalk.green('Project successfully scaffolded!\n\n'));
-			rootDir = utils.rootDirInRange();
+			rootDir = path.resolve(process.cwd(),'functions/')
 			resolve()
 		});
 	})
 }
 
-const templateProjectSettings = () => {
-	return new Promise((resolve, reject) => {
-		utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:projectID});
-		utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:slug, pID: projectID});
-		// utils.openTemplateSave(`${rootDir}/.access_token`, {aT:accessToken});
-		fs.writeFileSync(`${rootDir}/.access_tokens/${slug}`, accessToken)
-		resolve();
-	})
+exports.templateProjectSettings = () => {
+	utils.openTemplateSave(`${rootDir}/.firebaserc`, {pID:projectID});
+	utils.openTemplateSave(`${rootDir}/package.json`, {projectslug:slug, pID: projectID});
+	// utils.openTemplateSave(`${rootDir}/.access_token`, {aT:accessToken});
+	fs.writeFileSync(`${rootDir}/.access_tokens/${slug}`, accessToken)
+	return Promise.resolve();
 }
 
 
-const cleanFiles = () => {
-	return new Promise((resolve, reject) => {
-		// fs.unlinkSync(`${rootDir}/actions/.ignore`)
-		fs.renameSync(`${rootDir}/_.gitignore`, `${rootDir}/.gitignore`)
-		resolve()	
-	})
+exports.cleanFiles = () => {
+	// fs.unlinkSync(`${rootDir}/actions/.ignore`)
+	fs.renameSync(`${rootDir}/_.gitignore`, `${rootDir}/.gitignore`)
+	return Promise.resolve()
 }
 
 
-const npmInstall = () => {
+exports.npmInstall = () => {
 	return new Promise((resolve, reject) => {
 		console.log(chalk.yellow('Now installing dependencies...\n\n\n'));
 		const install =  spawn('npm', ['--prefix', './functions', 'install', './functions'])

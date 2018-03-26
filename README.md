@@ -1,6 +1,8 @@
 # Consider.js
 A mini-framework for building out non-trivial response architecture of conversation apps on Dialogflow leveraging Firebase
 
+[![Build Status](https://travis-ci.org/benoftoolofna/consider-miniframe.svg?branch=master)](https://travis-ci.org/benoftoolofna/consider-miniframe)
+
 ## Installation:
 1. `npm install localtunnel -g`
 2. `npm install considerjs -g`
