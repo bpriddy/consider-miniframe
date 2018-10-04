@@ -6,6 +6,7 @@ A mini-framework for building out non-trivial response architecture of conversat
 ## Installation:
 1. `npm install localtunnel -g`
 2. `npm install considerjs -g`
+2. `npm install firebase-tools -g`
 
 ## Create a Project:
 1. Navigate to the project root.
