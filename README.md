@@ -4,9 +4,10 @@ A mini-framework for building out non-trivial response architecture of conversat
 [![Build Status](https://travis-ci.org/benoftoolofna/consider-miniframe.svg?branch=master)](https://travis-ci.org/benoftoolofna/consider-miniframe)
 
 ## Installation:
-1. `npm install localtunnel -g`
-2. `npm install considerjs -g`
-2. `npm install firebase-tools -g`
+1. `npm install pm2 -g`
+2. `npm install localtunnel -g`
+3. `npm install considerjs -g`
+4. `npm install firebase-tools -g`
 
 ## Create a Project:
 1. Navigate to the project root.
